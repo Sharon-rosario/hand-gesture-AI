@@ -27,11 +27,11 @@ hand-gesture-AI/
 
 ## 🚀 Key Achievements
 - **Phase 1 Complete**: Reliable hand tracking + skeleton rendering on responsive black canvas.
-- **Phase 2 In-Progress (Drawing Board)**: 
-  - Point-to-draw (Index finger up trigger).
-  - Stability buffer to solve flickering.
-  - Multi-color palette and Eraser mode.
-  - Smooth line rendering.
+- **Phase 2 Complete**: 
+  - Drawing Board (Point-to-draw, Stability buffers).
+  - Fruit Ninja (Physics-based fruit spawning, Slicing mechanics, Lives/Scores).
+  - Shape Builder (Two-hand geometric manipulation).
+
 
 ## 🧱 Module 3 (Geometry / Shapes) - Upcoming
 - **Goal**: Create perfect shapes (Square, Circle, Rectangle).

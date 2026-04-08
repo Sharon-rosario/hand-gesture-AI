@@ -13,8 +13,9 @@ class HandTracker:
         self.hands = self.mp_hands.Hands(
             static_image_mode=False,
             max_num_hands=2,
-            min_detection_confidence=0.7,
-            min_tracking_confidence=0.8
+            min_detection_confidence=0.5,
+            min_tracking_confidence=0.5
+
 
         )
         self.mp_draw = mp.solutions.drawing_utils

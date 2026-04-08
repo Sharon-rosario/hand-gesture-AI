@@ -4,6 +4,7 @@ from ui.canvas import Canvas
 from app.menu import Menu
 from modules.drawing_board import DrawingBoard
 from modules.shape_builder import ShapeBuilder
+from modules.fruit_ninja import FruitNinja
 import cv2
 
 
@@ -14,8 +15,10 @@ def main():
     menu = Menu()
     drawing_board = DrawingBoard()
     shape_builder = ShapeBuilder()
+    fruit_ninja = FruitNinja()
 
-    state = "HOME" # HOME, DRAWING, SHAPES
+    state = "HOME" # HOME, DRAWING, SHAPES, FRUIT_NINJA
+
 
 
     print("Starting Hand Gesture Detection...")
@@ -62,6 +65,17 @@ def main():
             canvas = canvas_ui.create_black_canvas(h, w, c)
             canvas = shape_builder.render(canvas)
             status = "Shape Builder"
+        
+        elif state == "FRUIT_NINJA":
+            result = fruit_ninja.update(landmarks, frame.shape)
+            if result == "HOME":
+                state = "HOME"
+            
+            h, w, c = frame.shape
+            canvas = canvas_ui.create_black_canvas(h, w, c)
+            canvas = fruit_ninja.render(canvas)
+            status = "Fruit Ninja"
+
 
 
         # Always draw the hand skeleton on top if needed (optional)

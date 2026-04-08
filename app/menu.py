@@ -39,7 +39,9 @@ class Menu:
             if x1 < cx < x2 and y1 < cy < y2:
                 if name == "Drawing Board": return "DRAWING"
                 elif name == "Shapes": return "SHAPES"
+                elif name == "Fruit Ninja": return "FRUIT_NINJA"
                 elif name == "Exit App": exit()
+
 
         
         return "HOME"
