@@ -3,6 +3,7 @@ from core.gesture_detector import GestureDetector
 from ui.canvas import Canvas
 from app.menu import Menu
 from modules.drawing_board import DrawingBoard
+from modules.shape_builder import ShapeBuilder
 import cv2
 
 
@@ -12,8 +13,10 @@ def main():
     canvas_ui = Canvas()
     menu = Menu()
     drawing_board = DrawingBoard()
+    shape_builder = ShapeBuilder()
 
-    state = "HOME" # HOME, DRAWING
+    state = "HOME" # HOME, DRAWING, SHAPES
+
 
     print("Starting Hand Gesture Detection...")
     print("Press ESC to exit.")
@@ -49,6 +52,17 @@ def main():
             canvas = canvas_ui.create_black_canvas(h, w, c)
             canvas = drawing_board.render(canvas)
             status = "Drawing Board"
+        
+        elif state == "SHAPES":
+            result = shape_builder.update(landmarks, frame.shape)
+            if result == "HOME":
+                state = "HOME"
+            
+            h, w, c = frame.shape
+            canvas = canvas_ui.create_black_canvas(h, w, c)
+            canvas = shape_builder.render(canvas)
+            status = "Shape Builder"
+
 
         # Always draw the hand skeleton on top if needed (optional)
         canvas_ui.draw_skeleton(canvas, landmarks)

@@ -18,9 +18,11 @@ class Menu:
         
         self.buttons = {
             "Drawing Board": (center_x - btn_w // 2, start_y, center_x + btn_w // 2, start_y + btn_h),
-            "Fruit Ninja": (center_x - btn_w // 2, start_y + 100, center_x + btn_w // 2, start_y + 100 + btn_h),
-            "Exit App": (center_x - btn_w // 2, start_y + 200, center_x + btn_w // 2, start_y + 200 + btn_h)
+            "Shapes": (center_x - btn_w // 2, start_y + 80, center_x + btn_w // 2, start_y + 80 + btn_h),
+            "Fruit Ninja": (center_x - btn_w // 2, start_y + 160, center_x + btn_w // 2, start_y + 160 + btn_h),
+            "Exit App": (center_x - btn_w // 2, start_y + 240, center_x + btn_w // 2, start_y + 240 + btn_h)
         }
+
 
     def update(self, landmarks, is_pinch, frame_shape):
         h, w, _ = frame_shape
@@ -36,7 +38,9 @@ class Menu:
         for name, (x1, y1, x2, y2) in self.buttons.items():
             if x1 < cx < x2 and y1 < cy < y2:
                 if name == "Drawing Board": return "DRAWING"
+                elif name == "Shapes": return "SHAPES"
                 elif name == "Exit App": exit()
+
         
         return "HOME"
 

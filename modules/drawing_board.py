@@ -13,15 +13,18 @@ class DrawingBoard(BaseModule):
         self.current_stroke = []
         self.colors = [(255, 255, 255), (0, 0, 255), (0, 255, 0), (255, 0, 0)]
         self.color_names = ["White", "Red", "Green", "Blue"]
-        self.current_color_idx = 0
+        self.current_color_idx = 0 # White by default
         self.brush_size = 5
         self.eraser_size = 50
         self.last_w, self.last_h = 0, 0
         self.buttons = {}
         
-        # Stability Buffer
+        # Stability & Smoothing
         self.lost_frame_count = 0
-        self.max_lost_frames = 3 # Number of frames to wait before ending stroke
+        self.max_lost_frames = 3
+        self.smooth_x, self.smooth_y = 0, 0
+        self.alpha = 0.5 # Smoothing factor (0 to 1, lower is smoother but more lag)
+
 
         
     def _update_layout(self, w, h):
@@ -66,9 +69,18 @@ class DrawingBoard(BaseModule):
         index_tip = self.detector.get_index_finger_tip(landmarks)
         
         if index_tip:
-            cx, cy = int(index_tip.x * w), int(index_tip.y * h)
+            # Apply smoothing to coordinates
+            new_x, new_y = int(index_tip.x * w), int(index_tip.y * h)
+            if self.smooth_x == 0: # Initialize
+                self.smooth_x, self.smooth_y = new_x, new_y
+            else:
+                self.smooth_x = int(self.alpha * new_x + (1 - self.alpha) * self.smooth_x)
+                self.smooth_y = int(self.alpha * new_y + (1 - self.alpha) * self.smooth_y)
+            
+            cx, cy = self.smooth_x, self.smooth_y
             
             if is_selecting:
+
                 for label, (x1, y1, x2, y2) in self.buttons.items():
                     if x1 < cx < x2 and y1 < cy < y2:
                         if label in self.color_names: self.current_color_idx = self.color_names.index(label)
