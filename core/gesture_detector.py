@@ -46,7 +46,8 @@ class GestureDetector:
         thumb_tip = hand.landmark[4]
         index_tip = hand.landmark[8]
         dist = self.get_distance((thumb_tip.x, thumb_tip.y), (index_tip.x, index_tip.y))
-        return dist < 0.05
+        return dist < 0.03
+
 
     def get_index_finger_tip(self, landmarks, hand_index=0):
         if not landmarks or len(landmarks) <= hand_index:
