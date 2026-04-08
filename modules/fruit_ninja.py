@@ -79,24 +79,38 @@ class FruitNinja(BaseModule):
 
         # Hand logic
         current_finger_pos = None
+        
         if landmarks:
             index_tip = self.detector.get_index_finger_tip(landmarks)
             if index_tip:
                 current_finger_pos = (int(index_tip.x * w), int(index_tip.y * h))
                 self.slash_trail.append(current_finger_pos)
-                if len(self.slash_trail) > self.max_trail_len:
-                    self.slash_trail.pop(0)
         else:
-            if self.slash_trail: self.slash_trail.pop(0)
+            # PREDICTIVE SLICING: If hand lost, predict next position based on last 2 points
+            if len(self.slash_trail) >= 2:
+                p1 = self.slash_trail[-2]
+                p2 = self.slash_trail[-1]
+                # Simple velocity projection
+                vx = p2[0] - p1[0]
+                vy = p2[1] - p1[1]
+                # Limit projection speed to avoid wild jumps
+                vx = np.clip(vx, -50, 50)
+                vy = np.clip(vy, -50, 50)
+                
+                predicted_pos = (p2[0] + vx, p2[1] + vy)
+                self.slash_trail.append(predicted_pos)
+                current_finger_pos = predicted_pos
+            
+        if len(self.slash_trail) > self.max_trail_len:
+            self.slash_trail.pop(0)
 
         # Update fruits and check collisions
         new_fruits = []
         for fruit in self.fruits:
             if fruit.update():
                 if not fruit.sliced and current_finger_pos and self.last_finger_pos:
-                    # Improved collision: check points between last and current pos
-                    # This handles fast movements better
-                    steps = 5
+                    # Check intersection along the WHOLE slash path
+                    steps = 10
                     for i in range(steps):
                         tx = int(self.last_finger_pos[0] + (current_finger_pos[0] - self.last_finger_pos[0]) * (i/steps))
                         ty = int(self.last_finger_pos[1] + (current_finger_pos[1] - self.last_finger_pos[1]) * (i/steps))
@@ -107,6 +121,7 @@ class FruitNinja(BaseModule):
                             else:
                                 self.score += 1
                             break
+
 
                 
                 # Check if fruit fell without being sliced
