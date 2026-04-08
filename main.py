@@ -21,7 +21,9 @@ def main():
     while True:
         frame, landmarks = tracker.get_frame()
         if frame is None:
+            print("Loop interrupted: No frame received from camera.")
             break
+
 
         is_pinch = detector.is_pinch(landmarks)
         status = ""

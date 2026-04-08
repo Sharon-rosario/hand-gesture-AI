@@ -7,6 +7,7 @@ class Canvas:
         self.mp_hands = mp.solutions.hands
         self.mp_draw = mp.solutions.drawing_utils
         self.drawing_styles = mp.solutions.drawing_styles
+        self.window_name = "Hand Gesture UI"
         self.window_initialized = False
 
     def create_black_canvas(self, h, w, c):
@@ -31,29 +32,33 @@ class Canvas:
         # Main box
         cv2.rectangle(canvas, (x1, y1), (x2, y2), color, thickness)
         if not active:
-            # Draw outline if not filled
             cv2.rectangle(canvas, (x1, y1), (x2, y2), (200, 200, 200), 1)
         
         # Label
-        text_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)[0]
+        font_scale = 0.5
+        text_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, font_scale, 1)[0]
         tx = x1 + (x2 - x1 - text_size[0]) // 2
         ty = y1 + (y2 - y1 + text_size[1]) // 2
-        cv2.putText(canvas, label, (tx, ty), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
+        cv2.putText(canvas, label, (tx, ty), cv2.FONT_HERSHEY_SIMPLEX, font_scale, (255, 255, 255), 1, cv2.LINE_AA)
 
     def show(self, canvas, status=""):
         if not self.window_initialized:
-            cv2.namedWindow("Hand Gesture UI", cv2.WND_PROP_FULLSCREEN)
-            cv2.setWindowProperty("Hand Gesture UI", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+            # Create a normal resizable window instead of forced fullscreen
+            cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
+            # Optionally, resize the window to a reasonable size if the canvas is small
+            h, w = canvas.shape[:2]
+            cv2.resizeWindow(self.window_name, w, h)
             self.window_initialized = True
 
         if status:
-            # Prettier status bar at bottom
             h, w = canvas.shape[:2]
             cv2.rectangle(canvas, (0, h-40), (w, h), (40, 40, 40), -1)
-            cv2.putText(canvas, f"MODE: {status}", (20, h-12), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 1, cv2.LINE_AA)
+            cv2.putText(canvas, f"MODE: {status} | Press ESC to Exit", (20, h-12), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 1, cv2.LINE_AA)
         
-        cv2.imshow("Hand Gesture UI", canvas)
+        cv2.imshow(self.window_name, canvas)
         
-        if cv2.waitKey(1) & 0xFF == 27:
+        key = cv2.waitKey(1) & 0xFF
+        if key == 27: # ESC
             cv2.destroyAllWindows()
             exit()
